@@ -1,18 +1,5 @@
 import speech_recognition as sr
 
-#alk = ['pina colada', 'gin tonic', 'sex on the beach']
-alk =['hallo']
-def findWords(result):
-    print("YEAAAH")
-    print(result[2])
-    #for sorts in alk:
-     #   if sorts in result:
-      #      print(sorts)
-    for r in result:
-        print(r)
-        print("\n")
-
-
 def main():
 
     r = sr.Recognizer()
@@ -33,7 +20,6 @@ def main():
             result = r.recognize_google(audio, language='de-DE')
             print("You have said \n" + result)
             print("Audio Recorded Successfully \n ")
-            findWords(result)
 
         except Exception as e:
             print("Error :  " + str(e))
