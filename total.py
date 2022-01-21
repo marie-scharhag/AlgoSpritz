@@ -1,7 +1,7 @@
 import speech_recognition as sr
 import time
+import pump
 import pyttsx3
-
 
 
 alk = ['caipirinha', 'mojito', 'gin sour']
@@ -9,6 +9,7 @@ notAlk =['wodka']
 mehr = ['zwei','2','drei','3', 'mal','vier','4','und','2 x']
 abbruch = ['abbruch','stopp', 'halt']
 vorherigen = ['auch', 'gleichen', 'letzten', 'vorherigen']
+
 
 dicti = {"speech":"","lastCocktail":"", "noAlk": False}
 
@@ -25,6 +26,7 @@ def bekannt(lastCocktail):
                 text = "Okay, ein "+lastCocktail+" wird jetzt gemixt!" 
                 print(text)
                 mainSpeaking(text)
+                pump.mixIT(lastCocktail)
                 break
 
 def unbekannt(lastCocktail):
@@ -133,6 +135,8 @@ def mainSpeaking(text):
     engine.say(text)
     engine.runAndWait()
     engine.stop()
+
+
 
 def main():
     timeout = time.time() + 60  #*5 für 5 Minuten
