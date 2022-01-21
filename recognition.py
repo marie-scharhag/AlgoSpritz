@@ -1,5 +1,9 @@
 import speech_recognition as sr
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> origin/pump
 def main():
 
     r = sr.Recognizer()
