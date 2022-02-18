@@ -2,7 +2,7 @@ import speech_recognition as sr
 import time
 import pump
 import pyttsx3
-
+import pygame
 
 alk = ['caipirinha', 'mojito', 'gin sour']
 notAlk =['wodka']
@@ -27,6 +27,7 @@ def bekannt(lastCocktail):
                 print(text)
                 mainSpeaking(text)
                 pump.mixIT(lastCocktail)
+                playSong(lastCocktail)
                 break
 
 def unbekannt(lastCocktail):
@@ -127,7 +128,7 @@ def mainListen():
 
 def mainSpeaking(text):
     engine = pyttsx3.init()
-    engine.setProperty('rate', 125)     
+    engine.setProperty('rate', 160)     
     engine.setProperty('volume',1.0)    
     voices = engine.getProperty('voices')       
     engine.setProperty('voice', voices[0].id)
@@ -136,11 +137,27 @@ def mainSpeaking(text):
     engine.runAndWait()
     engine.stop()
 
+def playSong(cocktail):
+    if cocktail =="caipirinha":
+        path="music/Caipirinha.mp3" 
+        dauer= 25    
+    elif cocktail =="mojito":
+        path="music/Mojito.mp3"
+        dauer =25
+    elif cocktail =="gin sour":
+        path = "music/GinSour.mp3"
+        dauer = 25
 
+    pygame.init()
+    pygame.mixer.music.load(path)
+    pygame.mixer.music.play()
+    time.sleep(dauer)
+    pygame.mixer.music.pause()
 
 def main():
     timeout = time.time() + 60  #*5 für 5 Minuten
-
+    text= "Heeeeey was geht? Ich bin Algospritz, dein persönlicher Cocktailautomat! Was kann ich dir zubereiten?"
+    mainSpeaking(text)
     while True:
         if time.time() > timeout:
             break
