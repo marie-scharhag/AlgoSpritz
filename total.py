@@ -1,17 +1,20 @@
 import speech_recognition as sr
 import time
-import pump
+#import pump
 import pyttsx3
 import pygame
+
+#languageID bei Sprachausgabe 0 bei Windows und 4 bei Mac
+language = 4
 
 alk = ['caipirinha', 'mojito', 'gin sour']
 notAlk =['wodka']
 mehr = ['zwei','2','drei','3', 'mal','vier','4','und','2 x']
 abbruch = ['abbruch','stopp', 'halt']
 vorherigen = ['auch', 'gleichen', 'letzten', 'vorherigen']
+befehl =['mix','mach','mache','hätte','nehme','nehm','will']
 
-
-dicti = {"speech":"","lastCocktail":"", "noAlk": False}
+dicti = {"speech":[],"lastCocktail":"", "noAlk": False}
 
 def bekannt(lastCocktail):
     test = 0
@@ -26,32 +29,38 @@ def bekannt(lastCocktail):
                 text = "Okay, ein "+lastCocktail+" wird jetzt gemixt!" 
                 print(text)
                 mainSpeaking(text)
-                pump.mixIT(lastCocktail)
+                #pump.mixIT(lastCocktail)
                 playSong(lastCocktail)
                 break
 
 def unbekannt(lastCocktail):
-    text = "t Tut mir leid, ich habe leider keinen "+lastCocktail+" in meinem Angebot. Möchtest du Vorschläge für andere Cocktails hören?"
+    text = "Sorry leider fehlen mir die Zutaten für einen "+lastCocktail
     print(">>>"+text) 
     mainSpeaking(text)
+    wunsch()
 
 def abbrechen():
-    text = "Der Vorgang wird abgebrochen."
+    text = "Ok ok ich hör ja schon auf"
     print(">>>"+text)
     mainSpeaking(text)
 
 def unverstaendlich():
-    text = "Ich habe dich nicht verstanden, sage es bitte noch einmal." 
+    text = "Was hast du gesagt?" 
     print(">>>"+text)
     mainSpeaking(text)
 
 def mehrmals():
-    text = "Bitte bestelle einzeln."
+    text = "Einer nach dem anderen meine Lieben"
     print(">>>"+text)
     mainSpeaking(text)
 
 def wunsch():
-    text = "Meine Top3 Cocktails sind...."
+    text = "Ich kann dir einen "
+    for drink in alk:
+        text += drink
+        if alk.index(drink) is not len(alk)-1:
+            text += ' oder '
+    text += ' mixen.'
     print(">>>"+text)
     mainSpeaking(text)
 
@@ -74,10 +83,83 @@ def recognize():
 
         except Exception as e:
             print("Error :  " + str(e))
-            unverstaendlich()
+            mainSpeaking("Was kann ich dir anbieten?")
         
 
 def mainListen():
+
+    sentence = dicti["speech"].lower().split()
+
+    for word in sentence:
+        #abbruch
+        if word in abbruch:
+            abbrechen()
+            break
+
+        #mehr als einer
+        if word in mehr:
+            next = sentence[sentence.index(word)+1]
+            if next in alk:
+                mehrmals()
+                break
+        
+        #Cocktailname
+        if word in alk:
+            #befehl vor Cocktail
+            if len(sentence) > 1:
+                prev = sentence[0:sentence.index(word)-1]
+                for w in prev:
+                    if w in befehl:
+                        dicti['noAlk']=False
+                        dicti["lastCocktail"]= word
+                        bekannt(word)
+                        break
+            #Nur Cocktailname
+            else:
+                dicti['noAlk']=False
+                dicti["lastCocktail"]= word
+                bekannt(word)
+                break
+
+        #Cocktail gibts nicht
+        if word in notAlk:
+            if len(sentence) > 1:
+                #befehl vor Cocktail
+                prev = sentence[0:sentence.index(word)-1]
+                for w in prev:
+                    if w in befehl:
+                        dicti['noAlk']=True
+                        dicti["lastCocktail"]= word
+                        unbekannt(word)
+                        break
+            #Nur Cocktailname
+            else:
+                dicti['noAlk']=True
+                dicti["lastCocktail"]= word
+                unbekannt(word)
+                break
+
+        #selben Cocktail
+        if word in vorherigen:
+            #letzter Cocktail gabs nicht
+            if dicti['noAlk'] is True:
+                unbekannt(dicti["lastCocktail"])
+                break
+            #gibt keinen vorherigen Cocktail
+            elif dicti["lastCocktail"] is "":
+                mainSpeaking("Du musst dir selbst etwas aussuchen")
+                wunsch()
+                break
+            else:
+                bekannt(dicti["lastCocktail"])
+                break
+        
+        #nach letztem wort immer noch nicht verstanden
+        if sentence.index(word) is len(sentence):
+            unverstaendlich()
+            break
+        
+def mainListen2():
 
     for sorts in alk:
         if sorts in dicti["speech"].lower():
@@ -122,16 +204,14 @@ def mainListen():
             wunsch()
             dicti['noAlk']=False
  
-
     print(dicti)
-
 
 def mainSpeaking(text):
     engine = pyttsx3.init()
     engine.setProperty('rate', 160)     
-    engine.setProperty('volume',1.0)    
-    voices = engine.getProperty('voices')       
-    engine.setProperty('voice', voices[0].id)
+    engine.setProperty('volume',1.0)   
+    voices = engine.getProperty('voices')  
+    engine.setProperty('voice', voices[4].id)
 
     engine.say(text)
     engine.runAndWait()
@@ -156,7 +236,7 @@ def playSong(cocktail):
 
 def main():
     timeout = time.time() + 60  #*5 für 5 Minuten
-    text= "Heeeeey was geht? Ich bin Algospritz, dein persönlicher Cocktailautomat! Was kann ich dir zubereiten?"
+    text= "Heeeeey was geht? Ich bin Algospritz, dein persönlicher Cocktailautomat! Was magst du trinken?"
     mainSpeaking(text)
     while True:
         if time.time() > timeout:
