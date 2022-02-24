@@ -4,37 +4,46 @@ import time
 import pyttsx3
 import pygame
 
+#to do:
+#Ansprechen
+#Musik auschalten
+#Dauermusik auf Pumpe anpassen
+#abbruch
+#unverstaendlich
+
+
+
 #languageID bei Sprachausgabe 0 bei Windows und 4 bei Mac
 language = 4
 
 alk = ['caipirinha', 'mojito', 'gin sour']
 notAlk =['wodka']
 mehr = ['zwei','2','drei','3', 'mal','vier','4','und','2 x']
-abbruch = ['abbruch','stopp', 'halt']
-vorherigen = ['auch', 'gleichen', 'letzten', 'vorherigen']
-befehl =['mix','mach','mache','hätte','nehme','nehm','will']
+abbruch = ['abbruch','stopp', 'halt','abbrechen','nein']
+vorherigen = ['auch', 'gleichen', 'letzten', 'vorherigen','selben']
+befehl =['mix','mach','mache','hätte','nehme','nehm','will','möchte','gib']
 
-dicti = {"speech":[],"lastCocktail":"", "noAlk": False}
+dicti = {"speech":"","lastCocktail":"", "noAlk": False}
 
-def bekannt(lastCocktail):
-    test = 0
-    for more in mehr:
-        if more in dicti["speech"].lower():
-            mehrmals()
-            test = 1
-        else:
-            if test == 1:
-                break  
-            else: 
-                text = "Okay, ein "+lastCocktail+" wird jetzt gemixt!" 
-                print(text)
-                mainSpeaking(text)
-                #pump.mixIT(lastCocktail)
-                playSong(lastCocktail)
-                break
+def bekannt(cocktail):
+    # test = 0
+    # for more in mehr:
+    #     if more in dicti["speech"].lower():
+    #         mehrmals()
+    #         test = 1
+    #     else:
+    #         if test == 1:
+    #             break  
+    #         else: 
+    text = "Okay, ein "+cocktail+" wird jetzt gemixt!" 
+    print(text)
+    mainSpeaking(text)
+    #pump.mixIT(cocktail)
+    playSong(cocktail)
+    # break
 
-def unbekannt(lastCocktail):
-    text = "Sorry leider fehlen mir die Zutaten für einen "+lastCocktail
+def unbekannt(cocktail):
+    text = "Sorry leider fehlen mir die Zutaten für einen "+cocktail
     print(">>>"+text) 
     mainSpeaking(text)
     wunsch()
@@ -79,7 +88,7 @@ def recognize():
             print("Audio Recorded Successfully \n ")
             dicti["speech"]=result
             
-            mainListen()
+            mainListen2()
 
         except Exception as e:
             print("Error :  " + str(e))
@@ -146,7 +155,7 @@ def mainListen():
                 unbekannt(dicti["lastCocktail"])
                 break
             #gibt keinen vorherigen Cocktail
-            elif dicti["lastCocktail"] is "":
+            elif dicti["lastCocktail"] == "":
                 mainSpeaking("Du musst dir selbst etwas aussuchen")
                 wunsch()
                 break
@@ -211,7 +220,7 @@ def mainSpeaking(text):
     engine.setProperty('rate', 160)     
     engine.setProperty('volume',1.0)   
     voices = engine.getProperty('voices')  
-    engine.setProperty('voice', voices[4].id)
+    engine.setProperty('voice', voices[language].id)
 
     engine.say(text)
     engine.runAndWait()
@@ -235,7 +244,7 @@ def playSong(cocktail):
     pygame.mixer.music.pause()
 
 def main():
-    timeout = time.time() + 60  #*5 für 5 Minuten
+    timeout = time.time() + 60*5  #*5 für 5 Minuten
     text= "Heeeeey was geht? Ich bin Algospritz, dein persönlicher Cocktailautomat! Was magst du trinken?"
     mainSpeaking(text)
     while True:
