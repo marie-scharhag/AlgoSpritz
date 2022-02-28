@@ -120,12 +120,12 @@ def mainListen():
         #mehr als einer
         if word in mehr:
             next = sentence[sentence.index(word)+1]
-            if next in alk:
+            if next in cocktailNames:
                 mehrmals()
                 break
         
         #Cocktailname
-        if word in alk:
+        if word in cocktailNames:
             #befehl vor Cocktail
             if len(sentence) > 1:
                 prev = sentence[0:sentence.index(word)-1]
