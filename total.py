@@ -19,6 +19,7 @@ class Cocktail:
         self.name = name
         self.inhalt = {'rum':0,'gin':0, 'limette':0, 'wasser':0, 'sirup':0}
         self.inhalt.update(zutat)
+        self.lied = lied
     
     def pumpZeit(self):
         self.maxTime = max(self.inhalt.values()) + 10 # evtl Zeit drauf rechnen
@@ -28,8 +29,8 @@ class Cocktail:
         return "Cocktail('{}','{}')".format(self.name,self.inhalt)
 
 #Cocktails definieren
-mojito = Cocktail(['mojito'],'music/Caipirinha.mp3',rum=10,limette=5,wasser=20,sirup=5)
-caipi = Cocktail(['caipi','caipirinha'],'music/Mojito.mp3',rum=10,limette=5,wasser=20)
+mojito = Cocktail(['mojito'],'music/Mojito.mp3',rum=10,limette=5,wasser=20,sirup=5)
+caipi = Cocktail(['caipi','caipirinha'],'music/Caipirinha.mp3',rum=10,limette=5,wasser=20)
 ginsour = Cocktail(['ginsour','gin sour'],'music/GinSour.mp3',gin=10,limette=5,wasser=20,sirup=5)
 cocktails = [mojito,caipi,ginsour]
 
@@ -196,7 +197,7 @@ def playSong(cocktail):
     pygame.init()
     pygame.mixer.music.load(cocktail.lied)
     pygame.mixer.music.play()
-    print("Lied " + cocktail.lied + " spielt " + cocktail.pumpZeit + "Sekunden")
+    print("Lied " , cocktail.lied , " spielt " , cocktail.pumpZeit() , "Sekunden")
     time.sleep(cocktail.pumpZeit())
     pygame.mixer.music.pause()
 
