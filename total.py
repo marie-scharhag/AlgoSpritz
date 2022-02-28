@@ -6,7 +6,6 @@ import pyttsx3
 import pygame
 
 #to do:
-#Ansprechen
 #Musik auschalten
 #abbruch
 
