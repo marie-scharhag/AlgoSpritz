@@ -3,30 +3,20 @@
 #starte die Pumpe
 import pyfirmata
 import time
+import Cocktail
 
 board = pyfirmata.Arduino('/dev/tty.usbmodem1101')
 
-syrup = 5 #nummer vom PIN
+rum = 1 #nummer vom PIN
 gin = 4
-water = 3
-limejuice = 12
-rum = 13 
-
-#unsere cocktails mit zutat:ml in sekunden
-caipi = {rum:10, limejuice:3} #, water:5}
-mojito = {rum:10, limejuice:10, water:10, syrup:10}
-ginsour = {limejuice:10, water:10, gin:10, syrup:10}
+limette = 5
+wasser = 6
+sirup = 7 
 
 def mixIT(cocktail):
-    if cocktail == "caipirinha":
-        for ingridient, ml in caipi.items():
-            start(ingridient, ml)
-    if cocktail == "mojito":
-        for ingridient, ml in mojito.items():
-            start(ingridient, ml)
-    if cocktail == "gin sour":
-        for ingridient, ml in ginsour.items():
-            start(ingridient, ml)
+    for ingridient, ml in cocktail.inhatlt.items():
+        if ml != 0:
+            start(ingridient, ml)s
 
 def start(ingridient, ml):
     board.digital[ingridient].write(1)

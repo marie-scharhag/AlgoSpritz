@@ -1,6 +1,7 @@
 import speech_recognition as sr
 import time
 #import pump
+import Cocktail
 import pyttsx3
 import pygame
 
@@ -8,35 +9,11 @@ import pygame
 #Ansprechen
 #Musik auschalten
 #abbruch
-#unverstaendlich
 
 
 #languageID bei Sprachausgabe 0 bei Windows und 4 bei Mac
 language = 4
 
-class Cocktail:
-    def __init__(self,name,lied,**zutat):
-        self.name = name
-        self.inhalt = {'rum':0,'gin':0, 'limette':0, 'wasser':0, 'sirup':0}
-        self.inhalt.update(zutat)
-        self.lied = lied
-    
-    def pumpZeit(self):
-        self.maxTime = max(self.inhalt.values()) + 10 # evtl Zeit drauf rechnen
-        return self.maxTime
-
-    def __repr__(self):
-        return "Cocktail('{}','{}')".format(self.name,self.inhalt)
-
-#Cocktails definieren
-mojito = Cocktail(['mojito'],'music/Mojito.mp3',rum=10,limette=5,wasser=20,sirup=5)
-caipi = Cocktail(['caipi','caipirinha'],'music/Caipirinha.mp3',rum=10,limette=5,wasser=20)
-ginsour = Cocktail(['ginsour','gin sour'],'music/GinSour.mp3',gin=10,limette=5,wasser=20,sirup=5)
-cocktails = [mojito,caipi,ginsour]
-
-cocktailNames = mojito.name + caipi.name + ginsour.name
-
-# alk = ['caipirinha', 'mojito', 'gin sour']
 noCocktail =['Cuba Libre','Gin Tonic','Moscow Mule', 'Negroni', 'Pina Colada', 'Tequila Sunrise','Cuba Libre','Zombie']
 mehr = ['zwei','2','drei','3', 'mal','vier','4','und','2 x']
 abbruch = ['abbruch','stopp', 'halt','abbrechen','nein']
@@ -46,7 +23,7 @@ befehl =['mix','mach','mache','hätte','nehme','nehm','will','möchte','gib']
 dicti = {"speech":"","lastCocktail":"", "noCocktail": False}
 
 def bekannt(cocktail):
-    for c in cocktails:
+    for c in Cocktail.cocktails:
         if cocktail in c.name:
             cock = c
     text = "Okay, ein "+cocktail+" wird jetzt gemixt!" 
@@ -78,9 +55,9 @@ def mehrmals():
 
 def wunsch():
     text = "Ich kann dir einen "
-    for drink in cocktails:
+    for drink in Cocktail.cocktails:
         text += drink.name[0]
-        if cocktails.index(drink) is not len(cocktails)-1:
+        if Cocktail.cocktails.index(drink) is not len(Cocktail.cocktails)-1:
             text += ' oder '
     text += ' mixen.'
     print(">>>"+text)
@@ -111,6 +88,7 @@ def recognize():
 def mainListen():
 
     sentence = dicti["speech"].lower().split()
+    print(sentence)
 
     for word in sentence:
         #abbruch
@@ -121,12 +99,12 @@ def mainListen():
         #mehr als einer
         if word in mehr:
             next = sentence[sentence.index(word)+1]
-            if next in cocktailNames:
+            if next in Cocktail.cocktailNames:
                 mehrmals()
                 break
         
         #Cocktailname
-        if word in cocktailNames:
+        if word in Cocktail.cocktailNames:
             #befehl vor Cocktail
             if len(sentence) > 1:
                 prev = sentence[0:sentence.index(word)-1]
@@ -175,9 +153,9 @@ def mainListen():
             else:
                 bekannt(dicti["lastCocktail"])
                 break
-        
+
         #nach letztem wort immer noch nicht verstanden
-        if sentence.index(word) is len(sentence):
+        if sentence.index(word) == len(sentence)-1:
             unverstaendlich()
             break
     
