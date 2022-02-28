@@ -3,6 +3,8 @@ import time
 #import pump
 import pyttsx3
 import pygame
+import multiprocessing
+import threading
 
 #to do:
 #Ansprechen
@@ -52,8 +54,9 @@ def bekannt(cocktail):
     text = "Okay, ein "+cocktail+" wird jetzt gemixt!" 
     print(text)
     mainSpeaking(text)
-    #pump.mixIT(cock)
     playSong(cock)
+    print("hier")
+ 
 
 def unbekannt(cocktail):
     text = "Sorry leider fehlen mir die Zutaten für einen "+cocktail
@@ -63,6 +66,8 @@ def unbekannt(cocktail):
 
 def abbrechen():
     text = "Ok ok ich hör ja schon auf"
+    #musik und pumpen abbrechen
+    pygame.mixer.music.pause()
     print(">>>"+text)
     mainSpeaking(text)
 
@@ -85,27 +90,6 @@ def wunsch():
     text += ' mixen.'
     print(">>>"+text)
     mainSpeaking(text)
-
-def recognize():
-    r = sr.Recognizer()
-    with sr.Microphone() as source:
-        r.adjust_for_ambient_noise(source)
-
-        print("Please say something")
-        audio = r.listen(source)
-        print("Recognizing Now .... ")
-        # recognize speech using google
-        try:
-            result = r.recognize_google(audio, language='de-DE')
-            print("You have said \n" + result)
-            print("Audio Recorded Successfully \n ")
-            dicti["speech"]=result
-            
-            mainListen()
-
-        except Exception as e:
-            print("Error :  " + str(e))
-            mainSpeaking("Was kann ich dir anbieten?")
         
 
 def mainListen():
@@ -195,15 +179,37 @@ def mainSpeaking(text):
 
 def playSong(cocktail):
     pygame.init()
-    pygame.mixer.music.load(cocktail.lied)
+    pygame.mixer.music.load("./AlgoSpritz/" + cocktail.lied)
     pygame.mixer.music.play()
     print("Lied " , cocktail.lied , " spielt " , cocktail.pumpZeit() , "Sekunden")
-    time.sleep(cocktail.pumpZeit())
-    pygame.mixer.music.pause()
+    threading.Timer(cocktail.pumpZeit(), pygame.mixer.music.pause).start()
+
+def recognize():
+    r = sr.Recognizer()
+    with sr.Microphone() as source:
+        r.adjust_for_ambient_noise(source)
+
+        print("Please say something")
+        audio = r.listen(source)
+        print("Recognizing Now .... ")
+        # recognize speech using google
+        try:
+            result = r.recognize_google(audio, language='de-DE')
+            print("You have said \n" + result)
+            print("Audio Recorded Successfully \n ")
+            dicti["speech"]=result
+            
+            if "algo spritz" in result.lower():
+                print("Yipppiahea")
+                mainListen()
+
+        except Exception as e:
+            print("Error :  " + str(e))
+            mainSpeaking("Was kann ich dir anbieten?")
 
 def main():
     timeout = time.time() + 60*5  #*5 für 5 Minuten
-    text= "Heeeeey was geht? Ich bin Algospritz, dein persönlicher Cocktailautomat! Was magst du trinken?"
+    text= "Hey was geht? Ich bin AlgoSpritz, dein persönlicher Cocktailautomat! Beginne jeden Befehl mit AlgoSpritz. Lasset die Party starten!"
     mainSpeaking(text)
     while True:
         if time.time() > timeout:
