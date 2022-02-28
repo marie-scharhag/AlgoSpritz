@@ -7,40 +7,52 @@ import pygame
 #to do:
 #Ansprechen
 #Musik auschalten
-#Dauermusik auf Pumpe anpassen
 #abbruch
 #unverstaendlich
-
 
 
 #languageID bei Sprachausgabe 0 bei Windows und 4 bei Mac
 language = 4
 
-alk = ['caipirinha', 'mojito', 'gin sour']
-notAlk =['wodka']
+class Cocktail:
+    def __init__(self,name,lied,**zutat):
+        self.name = name
+        self.inhalt = {'rum':0,'gin':0, 'limette':0, 'wasser':0, 'sirup':0}
+        self.inhalt.update(zutat)
+    
+    def pumpZeit(self):
+        self.maxTime = max(self.inhalt.values()) + 10 # evtl Zeit drauf rechnen
+        return self.maxTime
+
+    def __repr__(self):
+        return "Cocktail('{}','{}')".format(self.name,self.inhalt)
+
+#Cocktails definieren
+mojito = Cocktail(['mojito'],'music/Caipirinha.mp3',rum=10,limette=5,wasser=20,sirup=5)
+caipi = Cocktail(['caipi','caipirinha'],'music/Mojito.mp3',rum=10,limette=5,wasser=20)
+ginsour = Cocktail(['ginsour','gin sour'],'music/GinSour.mp3',gin=10,limette=5,wasser=20,sirup=5)
+cocktails = [mojito,caipi,ginsour]
+
+cocktailNames = mojito.name + caipi.name + ginsour.name
+
+# alk = ['caipirinha', 'mojito', 'gin sour']
+noCocktail =['Cuba Libre','Gin Tonic','Moscow Mule', 'Negroni', 'Pina Colada', 'Tequila Sunrise','Cuba Libre','Zombie']
 mehr = ['zwei','2','drei','3', 'mal','vier','4','und','2 x']
 abbruch = ['abbruch','stopp', 'halt','abbrechen','nein']
 vorherigen = ['auch', 'gleichen', 'letzten', 'vorherigen','selben']
 befehl =['mix','mach','mache','hätte','nehme','nehm','will','möchte','gib']
 
-dicti = {"speech":"","lastCocktail":"", "noAlk": False}
+dicti = {"speech":"","lastCocktail":"", "noCocktail": False}
 
 def bekannt(cocktail):
-    # test = 0
-    # for more in mehr:
-    #     if more in dicti["speech"].lower():
-    #         mehrmals()
-    #         test = 1
-    #     else:
-    #         if test == 1:
-    #             break  
-    #         else: 
+    for c in cocktails:
+        if cocktail in c.name:
+            cock = c
     text = "Okay, ein "+cocktail+" wird jetzt gemixt!" 
     print(text)
     mainSpeaking(text)
-    #pump.mixIT(cocktail)
-    playSong(cocktail)
-    # break
+    #pump.mixIT(cock)
+    playSong(cock)
 
 def unbekannt(cocktail):
     text = "Sorry leider fehlen mir die Zutaten für einen "+cocktail
@@ -65,9 +77,9 @@ def mehrmals():
 
 def wunsch():
     text = "Ich kann dir einen "
-    for drink in alk:
-        text += drink
-        if alk.index(drink) is not len(alk)-1:
+    for drink in cocktails:
+        text += drink.name[0]
+        if cocktails.index(drink) is not len(cocktails)-1:
             text += ' oder '
     text += ' mixen.'
     print(">>>"+text)
@@ -88,7 +100,7 @@ def recognize():
             print("Audio Recorded Successfully \n ")
             dicti["speech"]=result
             
-            mainListen2()
+            mainListen()
 
         except Exception as e:
             print("Error :  " + str(e))
@@ -119,31 +131,31 @@ def mainListen():
                 prev = sentence[0:sentence.index(word)-1]
                 for w in prev:
                     if w in befehl:
-                        dicti['noAlk']=False
+                        dicti['noCocktail']=False
                         dicti["lastCocktail"]= word
                         bekannt(word)
                         break
             #Nur Cocktailname
             else:
-                dicti['noAlk']=False
+                dicti['noCocktail']=False
                 dicti["lastCocktail"]= word
                 bekannt(word)
                 break
 
         #Cocktail gibts nicht
-        if word in notAlk:
+        if word in noCocktail:
             if len(sentence) > 1:
                 #befehl vor Cocktail
                 prev = sentence[0:sentence.index(word)-1]
                 for w in prev:
                     if w in befehl:
-                        dicti['noAlk']=True
+                        dicti['noCocktail']=True
                         dicti["lastCocktail"]= word
                         unbekannt(word)
                         break
             #Nur Cocktailname
             else:
-                dicti['noAlk']=True
+                dicti['noCocktail']=True
                 dicti["lastCocktail"]= word
                 unbekannt(word)
                 break
@@ -151,7 +163,7 @@ def mainListen():
         #selben Cocktail
         if word in vorherigen:
             #letzter Cocktail gabs nicht
-            if dicti['noAlk'] is True:
+            if dicti['noCocktail'] is True:
                 unbekannt(dicti["lastCocktail"])
                 break
             #gibt keinen vorherigen Cocktail
@@ -167,53 +179,7 @@ def mainListen():
         if sentence.index(word) is len(sentence):
             unverstaendlich()
             break
-        
-def mainListen2():
-
-    for sorts in alk:
-        if sorts in dicti["speech"].lower():
-            dicti["lastCocktail"]= sorts
-            bekannt(dicti["lastCocktail"]) 
-          
-    for vor in vorherigen:
-        if vor in dicti["speech"].lower():
-            bekannt(dicti["lastCocktail"])
-
-    for abb in abbruch:
-        if abb in dicti["speech"].lower():
-            abbrechen() 
-            
-    unverst = alk + mehr +abbruch +vorherigen+notAlk
-    unverst.append('ja') 
-    #hasIt = any(dicti["speech"].lower() in a for a in unverst)
-    #print(hasIt) 
-    #if hasIt == False:
-    #   unverstaendlich()
-    #print(hasIt)
-
-    b = 0
-    for a in unverst:
-        if a in dicti['speech'].lower():
-            b = 1
-    if b==0:
-        unverstaendlich()
-                
-
-
-    for noo in notAlk:
-        if noo in dicti['speech'].lower():
-            dicti["lastCocktail"]=noo
-            unbekannt(dicti["lastCocktail"])
-            dicti['noAlk']=True
-
-
-    if 'ja' in dicti["speech"].lower():
-        if dicti['noAlk']==True:        
-            print("juhuu")
-            wunsch()
-            dicti['noAlk']=False
- 
-    print(dicti)
+    
 
 def mainSpeaking(text):
     engine = pyttsx3.init()
@@ -227,20 +193,11 @@ def mainSpeaking(text):
     engine.stop()
 
 def playSong(cocktail):
-    if cocktail =="caipirinha":
-        path="music/Caipirinha.mp3" 
-        dauer= 25    
-    elif cocktail =="mojito":
-        path="music/Mojito.mp3"
-        dauer =25
-    elif cocktail =="gin sour":
-        path = "music/GinSour.mp3"
-        dauer = 25
-
     pygame.init()
-    pygame.mixer.music.load(path)
+    pygame.mixer.music.load(cocktail.lied)
     pygame.mixer.music.play()
-    time.sleep(dauer)
+    print("Lied " + cocktail.lied + " spielt " + cocktail.pumpZeit + "Sekunden")
+    time.sleep(cocktail.pumpZeit())
     pygame.mixer.music.pause()
 
 def main():
