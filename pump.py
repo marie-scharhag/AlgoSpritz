@@ -14,9 +14,9 @@ wasser = 6
 sirup = 7 
 
 def mixIT(cocktail):
-    for ingridient, ml in cocktail.inhatlt.items():
+    for ingridient, ml in cocktail.inhalt.items():
         if ml != 0:
-            start(ingridient, ml)s
+            start(ingridient, ml)
 
 def start(ingridient, ml):
     board.digital[ingridient].write(1)
