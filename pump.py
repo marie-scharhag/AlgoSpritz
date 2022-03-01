@@ -7,8 +7,8 @@ import Cocktail
 import threading
 
 board = pyfirmata.Arduino('/dev/tty.usbmodem142401')
-# 'rum':2, 
-ingredient = {'gin':4, 'limette':5, 'wasser':6, 'sirup':7}
+
+ingredient = {'rum':2, 'gin':4, 'limette':5, 'wasser':6, 'sirup':7}
 
 def mixIT(cocktail):
     print(cocktail.inhalt.items)
@@ -23,7 +23,7 @@ def start(ingridient, ml):
     board.digital[ingridient].write(0)
 
 def abbruch():
-    # board.digital[2].write(0)
+    board.digital[2].write(0)
     board.digital[4].write(0)
     board.digital[5].write(0)
     board.digital[6].write(0)
