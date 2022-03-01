@@ -4,6 +4,9 @@ import pump
 import Cocktail
 import pyttsx3
 import pygame
+import threading
+import sys
+import os
 
 #to do:
 #Musik auschalten
@@ -28,8 +31,8 @@ def bekannt(cocktail):
     text = "Okay, ein "+cocktail+" wird jetzt gemixt!" 
     print(text)
     mainSpeaking(text)
-    pump.mixIT(cock)
     playSong(cock)
+    pump.mixIT(cock)
 
 def unbekannt(cocktail):
     text = "Sorry leider fehlen mir die Zutaten für einen "+cocktail
@@ -40,6 +43,8 @@ def unbekannt(cocktail):
 def abbrechen():
     text = "Ok ok ich hör ja schon auf"
     print(">>>"+text)
+    pygame.mixer.music.pause()
+    pump.abbruch()
     mainSpeaking(text)
 
 def unverstaendlich():
@@ -112,7 +117,7 @@ def mainListen():
                         dicti['noCocktail']=False
                         dicti["lastCocktail"]= word
                         bekannt(word)
-                        break
+                break
             #Nur Cocktailname
             else:
                 dicti['noCocktail']=False
@@ -130,7 +135,7 @@ def mainListen():
                         dicti['noCocktail']=True
                         dicti["lastCocktail"]= word
                         unbekannt(word)
-                        break
+                break   
             #Nur Cocktailname
             else:
                 dicti['noCocktail']=True
@@ -175,8 +180,9 @@ def playSong(cocktail):
     pygame.mixer.music.load(cocktail.lied)
     pygame.mixer.music.play()
     print("Lied " , cocktail.lied , " spielt " , cocktail.pumpZeit() , "Sekunden")
-    time.sleep(cocktail.pumpZeit())
-    pygame.mixer.music.pause()
+    threading.Timer(cocktail.pumpZeit(), pygame.mixer.music.pause).start()
+    # time.sleep(cocktail.pumpZeit())
+    # pygame.mixer.music.pause()
 
 def main():
     timeout = time.time() + 60*5  #*5 für 5 Minuten
@@ -189,7 +195,16 @@ def main():
             recognize()
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except KeyboardInterrupt:
+        print('Interrupted')
+        try:
+            pump.abbruch()
+            pygame.mixer.music.pause()
+            sys.exit(0)
+        except SystemExit:
+            os._exit(0)
 
 
 
