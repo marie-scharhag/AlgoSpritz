@@ -1,6 +1,6 @@
 import speech_recognition as sr
 import time
-#import pump
+import pump
 import Cocktail
 import pyttsx3
 import pygame
@@ -28,7 +28,7 @@ def bekannt(cocktail):
     text = "Okay, ein "+cocktail+" wird jetzt gemixt!" 
     print(text)
     mainSpeaking(text)
-    #pump.mixIT(cock)
+    pump.mixIT(cock)
     playSong(cock)
 
 def unbekannt(cocktail):

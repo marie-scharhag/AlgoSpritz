@@ -13,9 +13,9 @@ class Cocktail:
         return "Cocktail('{}','{}')".format(self.name,self.inhalt)
 
 #Cocktails definieren
-mojito = Cocktail(['mojito'],'music/Mojito.mp3',rum=10,limette=5,wasser=20,sirup=5)
-caipi = Cocktail(['caipirinha','caipi'],'music/Caipirinha.mp3',rum=10,limette=5,wasser=20)
-ginsour = Cocktail(['ginsour','gin sour'],'music/GinSour.mp3',gin=10,limette=5,wasser=20,sirup=5)
+mojito = Cocktail(['mojito'],'music/Mojito.mp3',rum=7,limette=7,wasser=30,sirup=5)
+caipi = Cocktail(['caipirinha','caipi'],'music/Caipirinha.mp3',rum=7,limette=5,wasser=5)
+ginsour = Cocktail(['ginsour','gin sour','gin'],'music/GinSour.mp3',gin=10,limette=7,wasser=30,sirup=5)
 cocktails = [mojito,caipi,ginsour]
 
 cocktailNames = mojito.name + caipi.name + ginsour.name
