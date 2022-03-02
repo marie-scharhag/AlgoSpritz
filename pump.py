@@ -13,6 +13,7 @@ ingredient = {'rum':2, 'gin':4, 'limette':5, 'wasser':6, 'sirup':7}
 def start(ingridient, ml):
     board.digital[ingridient].write(1)
     # threading.Timer(ml, board.digital[ingridient].write(0)).start()
+    # das hat nicht funktiniert??
     time.sleep(ml)
     board.digital[ingridient].write(0)
 
@@ -29,3 +30,5 @@ def abbruch():
     board.digital[5].write(0)
     board.digital[6].write(0)
     board.digital[7].write(0)
+
+    
