@@ -6,7 +6,7 @@ class Cocktail:
         self.lied = lied
     
     def pumpZeit(self):
-        maxTime = max(self.inhalt.values()) + 10 # evtl Zeit drauf rechnen
+        maxTime = max(self.inhalt.values())# evtl Zeit drauf rechnen
         # maxTime = sum(self.inhalt.values())
         return maxTime
 

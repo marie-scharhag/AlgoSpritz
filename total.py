@@ -9,6 +9,7 @@ import threading
 import sys
 import os
 from random import randint
+import lamp
 
 #to do:
 #Musik auschalten: erledigt 
@@ -47,6 +48,13 @@ music = True
 #cocktail wird gemischt ja oder nein
 cockInProgress = False
 
+def changecock():
+    global cockInProgress
+    if cockInProgress:
+        cockInProgress = False
+    else: 
+        cockInProgress = True
+
 def bekannt(cocktail):
     for c in Cocktail.cocktails:
         if cocktail in c.name:
@@ -57,13 +65,6 @@ def bekannt(cocktail):
     playSong(cock)
     pump.mixIT(cock)
     threading.Timer(cock.pumpZeit(), changecock).start()
-
-def changecock():
-    global cockInProgress
-    if cockInProgress:
-        cockInProgress = False
-    else: 
-        cockInProgress = True
 
 def unbekannt(cocktail):
     text = "Sorry not sorry, das kann ich leider noch nicht zubereiten. "+cocktail
@@ -130,6 +131,9 @@ def automaticalyTurnOff():
 
 def turnoff():
     automaticalyTurnOff()
+    lamp.auschalten()
+    pump.abbruch()
+    pygame.mixer.music.pause()
     sys.exit(0)
 
 def mainListen():
@@ -264,8 +268,8 @@ def mainSpeaking(text):
 def playSong(cocktail):
     if music:
         pygame.init()
-        #pygame.mixer.music.load(cocktail.lied)
-        pygame.mixer.music.load("./AlgoSpritz/" + cocktail.lied)
+        pygame.mixer.music.load(cocktail.lied)
+        # pygame.mixer.music.load("./AlgoSpritz/" + cocktail.lied)
         pygame.mixer.music.play()
         print("Lied " , cocktail.lied , " spielt " , cocktail.pumpZeit() , "Sekunden")
         threading.Timer(cocktail.pumpZeit(), pygame.mixer.music.pause).start()
@@ -309,6 +313,7 @@ if __name__ == "__main__":
     except KeyboardInterrupt:
         print('Interrupted')
         try:
+            automaticalyTurnOff()
             lamp.ausschalten()
             pump.abbruch()
             pygame.mixer.music.pause()
