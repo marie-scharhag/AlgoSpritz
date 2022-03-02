@@ -291,9 +291,11 @@ def recognize():
             #mainSpeaking("Was kann ich dir anbieten?")
 
 def main():
+    threading.Thread(target=lamp.anschalten).start()
     timeout = time.time() + 60*5  #*5 für 5 Minuten
     text= "Hey was geht? Ich bin AlgoSpritz, dein persönlicher Cocktailautomat! Lasset die Party starten!"
     mainSpeaking(text)
+    threading.Thread(target=lamp.party).start()
     while True:
         if time.time() > timeout:
             automaticalyTurnOff()
@@ -307,6 +309,7 @@ if __name__ == "__main__":
     except KeyboardInterrupt:
         print('Interrupted')
         try:
+            lamp.ausschalten()
             pump.abbruch()
             pygame.mixer.music.pause()
             sys.exit(0)
