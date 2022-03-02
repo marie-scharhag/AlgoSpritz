@@ -29,7 +29,7 @@ import lamp
 #languageID bei Sprachausgabe 0 bei Windows und 4 bei Mac
 language = 4
 
-noCocktail =['Cuba Libre','Gin Tonic','Moscow Mule', 'Negroni', 'Pina Colada', 'Tequila Sunrise','Cuba Libre','Zombie']
+noCocktail =['cuba libre','gin tonic','moscow mule', 'negroni', 'pina colada', 'tequila sunrise','zombie']
 mehr = ['zwei','2','drei','3', 'mal','vier','4','und','2 x']
 abbruch = ['abbruch','stopp', 'halt','abbrechen','nein']
 vorherigen = ['auch', 'gleichen', 'letzten', 'vorherigen','selben']
@@ -38,7 +38,7 @@ insult = ['fyou', 'a*', 'f*', 'maul', 'schnauze', 'h*']
 musicoff = ['off','aus']
 musicon = ['an','on']
 musicname = ['music', 'musik']
-algooff = ['ausschalten', 'vorbei']
+algooff = ['ausschalten', 'vorbei', 'beenden']
 surprise = ['überrasch', 'überraschung', 'egal', 'random', 'zufälligen', 'zufällig']
 suggestion = ['was', 'welche', 'cocktails', 'vorschläge']
 dicti = {"speech":"","lastCocktail":"", "noCocktail": False}
@@ -64,6 +64,9 @@ def bekannt(cocktail):
     mainSpeaking(text)
     playSong(cock)
     pump.mixIT(cock)
+    # lamp.startPP()
+    #lamp.party()
+    #threading.Timer(cock.pumpZeit(), lamp.lightOn).start()
     threading.Timer(cock.pumpZeit(), changecock).start()
 
 def unbekannt(cocktail):
@@ -74,12 +77,16 @@ def unbekannt(cocktail):
 
 def abbrechen():
     text = "Ok ok ich hör ja schon auf"
+    changecock()
     #musik und pumpen abbrechen
     print(">>>"+text)
     if pygame.mixer.get_init():
         pygame.mixer.music.pause()
     pump.abbruch()
-    changecock()
+    for thing in threading.enumerate():
+        if isinstance(thing, threading.Timer):
+            thing.cancel()
+    # lamp.lightOn()
     mainSpeaking(text)
 
 def turnmusic():
@@ -126,15 +133,20 @@ def talkToMe():
     mainSpeaking(text)   
 
 def automaticalyTurnOff(): 
-    text = "Die Party war der Hammer! Zeit adios amigos zu sagen. Turn off in 3 2 1 Boooom!"
+    text = "Die Party war der Hammer! Zeit adios amigos zu sagen. Turn off in 3 2 1 Boooooooooom!"
     mainSpeaking(text)
 
 def turnoff():
-    automaticalyTurnOff()
-    lamp.auschalten()
-    pump.abbruch()
-    pygame.mixer.music.pause()
-    sys.exit(0)
+    try:
+        automaticalyTurnOff()
+        lamp.ausschalten()
+        threading.enumerate().clear()
+        pump.abbruch()
+        if pygame.mixer.get_init():
+            pygame.mixer.music.pause()
+        sys.exit(0)
+    except SystemExit:
+        os._exit(0)
 
 def mainListen():
     global cockInProgress
@@ -268,8 +280,8 @@ def mainSpeaking(text):
 def playSong(cocktail):
     if music:
         pygame.init()
-        pygame.mixer.music.load(cocktail.lied)
-        # pygame.mixer.music.load("./AlgoSpritz/" + cocktail.lied)
+        #pygame.mixer.music.load(cocktail.lied)
+        pygame.mixer.music.load("./AlgoSpritz/" + cocktail.lied)
         pygame.mixer.music.play()
         print("Lied " , cocktail.lied , " spielt " , cocktail.pumpZeit() , "Sekunden")
         threading.Timer(cocktail.pumpZeit(), pygame.mixer.music.pause).start()
@@ -302,7 +314,7 @@ def main():
     threading.Thread(target=lamp.party).start()
     while True:
         if time.time() > timeout:
-            automaticalyTurnOff()
+            turnoff()
             break
         else:
             recognize()
@@ -315,8 +327,10 @@ if __name__ == "__main__":
         try:
             automaticalyTurnOff()
             lamp.ausschalten()
+            threading.enumerate().clear()
             pump.abbruch()
-            pygame.mixer.music.pause()
+            if pygame.mixer.get_init():
+                pygame.mixer.music.pause()
             sys.exit(0)
         except SystemExit:
             os._exit(0)
