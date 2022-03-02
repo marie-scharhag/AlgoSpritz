@@ -6,16 +6,20 @@ import time
 import Cocktail
 import threading
 
-board = pyfirmata.Arduino('/dev/tty.usbmodem142401')
+board = pyfirmata.Arduino('/dev/tty.usbmodem101')
 
 ingredient = {'rum':2, 'gin':4, 'limette':5, 'wasser':6, 'sirup':7}
 
+def stopPump(ing):
+    board.digital[ing].write(0)
+
 def start(ingridient, ml):
     board.digital[ingridient].write(1)
-    # threading.Timer(ml, board.digital[ingridient].write(0)).start()
+    threading.Timer(ml, stopPump, [ingridient]).start()
+    #threading.Timer(ml, abbruch).start()
     # das hat nicht funktiniert??
-    time.sleep(ml)
-    board.digital[ingridient].write(0)
+    #time.sleep(ml)
+    #board.digital[ingridient].write(0)
 
 def mixIT(cocktail):
     print(cocktail.inhalt.items)

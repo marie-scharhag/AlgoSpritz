@@ -1,7 +1,7 @@
 from distutils.command.config import config
 import speech_recognition as sr
 import time
-#import pump
+import pump
 import Cocktail
 import pyttsx3
 import pygame
@@ -42,8 +42,6 @@ surprise = ['überrasch', 'überraschung', 'egal', 'random', 'zufälligen', 'zuf
 suggestion = ['was', 'welche', 'cocktails', 'vorschläge']
 dicti = {"speech":"","lastCocktail":"", "noCocktail": False}
 
-#tst von ändernung 
-
 #music abspielen ja oder nein
 music = True
 #cocktail wird gemischt ja oder nein
@@ -57,8 +55,8 @@ def bekannt(cocktail):
     print(text)
     mainSpeaking(text)
     playSong(cock)
+    pump.mixIT(cock)
     threading.Timer(cock.pumpZeit(), changecock).start()
-    #pump.mixIT(cock)
 
 def changecock():
     global cockInProgress
@@ -79,7 +77,7 @@ def abbrechen():
     print(">>>"+text)
     if pygame.mixer.get_init():
         pygame.mixer.music.pause()
-    #pump.abbruch()
+    pump.abbruch()
     changecock()
     mainSpeaking(text)
 
@@ -309,7 +307,7 @@ if __name__ == "__main__":
     except KeyboardInterrupt:
         print('Interrupted')
         try:
-            #pump.abbruch()
+            pump.abbruch()
             pygame.mixer.music.pause()
             sys.exit(0)
         except SystemExit:
