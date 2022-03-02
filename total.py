@@ -42,6 +42,8 @@ surprise = ['überrasch', 'überraschung', 'egal', 'random', 'zufälligen', 'zuf
 suggestion = ['was', 'welche', 'cocktails', 'vorschläge']
 dicti = {"speech":"","lastCocktail":"", "noCocktail": False}
 
+#tst von ändernung 
+
 #music abspielen ja oder nein
 music = True
 #cocktail wird gemischt ja oder nein
