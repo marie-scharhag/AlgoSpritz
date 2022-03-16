@@ -12,4 +12,4 @@ Der Cocktailautomat reagiert auf verschiedene Befehle und kann aus 5 Zutaten 3 v
 - LED Streifen
 
 ## Demo Vdeo
-[Demo Video](https://youtu.be/6kjruOOCzKA)
+[Demo Video](https://youtu.be/6kjruOOCzKA) auf YouTube
